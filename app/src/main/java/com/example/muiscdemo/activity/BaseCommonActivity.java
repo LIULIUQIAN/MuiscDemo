@@ -3,6 +3,8 @@ package com.example.muiscdemo.activity;
 import com.example.muiscdemo.util.OrmUtil;
 import com.example.muiscdemo.util.SharedPreferencesUtil;
 
+import butterknife.ButterKnife;
+
 public class BaseCommonActivity extends BaseActivity {
 
     protected SharedPreferencesUtil sp;
@@ -12,7 +14,7 @@ public class BaseCommonActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
-//        ButterKnife.bind(this);
+        ButterKnife.bind(this);
 
 
         sp = SharedPreferencesUtil.getInstance(getApplicationContext());
