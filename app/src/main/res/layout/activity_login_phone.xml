@@ -6,4 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".activity.LoginPhoneActivity">
 
+    <include layout="@layout/tool_bar"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

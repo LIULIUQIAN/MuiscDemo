@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.example.muiscdemo.R;
 
-public class LoginPhoneActivity extends AppCompatActivity {
+public class LoginPhoneActivity extends BaseTitleActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

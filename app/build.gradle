@@ -63,4 +63,29 @@ dependencies {
     //    apache common lang3
     implementation 'org.apache.commons:commons-lang3:3.0'
 
+    //    okhttp
+    implementation "com.squareup.okhttp3:okhttp:4.2.2"
+
+    //    okhttp，chrome sniffer packet
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+
+    //    retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+
+    //    gson
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+    //    rxjava
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'com.squareup.retrofit2:converter-gson:+'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:+'
+
+    //    okhttp,sniffer packet
+    debugCompile 'com.readystatesoftware.chuck:library:1.1.0'
+    releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.1.0'
+
+    //    event bus
+    implementation 'org.greenrobot:eventbus:3.1.1'
+
 }

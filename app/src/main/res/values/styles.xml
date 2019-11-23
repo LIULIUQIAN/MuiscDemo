@@ -12,14 +12,33 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
     </style>
+
     <style name="AppTheme.NoActionBar.Fullscreen">
         <item name="android:windowFullscreen">true</item>
     </style>
+
+    <!--toolbar样式-->
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <!--版权样式-->
     <style name="CopyrightText">
         <item name="android:textColor">@color/text_white</item>
         <item name="android:textSize">@dimen/copyright</item>
+    </style>
+
+    <!--登陆，注册界面EditText样式-->
+    <style name="EditText">
+        <item name="android:drawablePadding">@dimen/button_padding</item>
+        <item name="android:drawableLeft">@drawable/ic_phone</item>
+        <item name="android:paddingTop">@dimen/button_padding</item>
+        <item name="android:paddingBottom">@dimen/button_padding</item>
+        <item name="android:background">@drawable/selector_edittext</item>
+        <item name="android:lines">1</item>
+        <item name="android:layout_marginTop">@dimen/button_margin_top</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
 

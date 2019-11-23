@@ -28,7 +28,7 @@ task clean(type: Delete) {
 
 ext {
     //最小版本
-    minSdkVersion = 15
+    minSdkVersion = 16
     //编译版本
     compileSdkVersion = 29
     //目标版本
