@@ -6,7 +6,7 @@ public class Consts {
     public static final String RESOURCE_PREFIX = BuildConfig.RESOURCE_PREFIX;
     public static final String ENDPOINT = BuildConfig.ENDPOINT;
 
-    public static final long TIME_OUT = 5;
+    public static final long TIME_OUT = 10;
     public static final String ID = "ID";
     public static final String TYPE = "type";
     public static final int TYPE_MUSIC = 0;

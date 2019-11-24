@@ -78,8 +78,6 @@ public class Api {
         });
 
         // 添加公共参数拦截器
-
-
         Retrofit retrofit = new Retrofit.Builder()
                 .client(builder.build())
                 .baseUrl(Consts.ENDPOINT)
