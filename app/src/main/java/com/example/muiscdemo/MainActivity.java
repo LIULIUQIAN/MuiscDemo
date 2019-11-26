@@ -6,20 +6,39 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.muiscdemo.activity.BaseTitleActivity;
+import com.example.muiscdemo.activity.LoginActivity;
+import com.example.muiscdemo.activity.SettingsActivity;
 import com.example.muiscdemo.adapter.HomeAdapter;
+import com.example.muiscdemo.api.Api;
+import com.example.muiscdemo.domain.Session;
+import com.example.muiscdemo.domain.User;
+import com.example.muiscdemo.domain.event.LoginSuccessEvent;
+import com.example.muiscdemo.domain.event.LogoutSuccessEvent;
+import com.example.muiscdemo.domain.response.DetailResponse;
 import com.example.muiscdemo.fragment.MeFragment;
 import com.example.muiscdemo.fragment.MusicFragment;
 import com.example.muiscdemo.fragment.VideoFragment;
+import com.example.muiscdemo.reactivex.HttpListener;
+import com.example.muiscdemo.util.ImageUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends BaseTitleActivity implements View.OnClickListener {
 
@@ -36,10 +55,17 @@ public class MainActivity extends BaseTitleActivity implements View.OnClickListe
     private LinearLayout ll_my_friend;
     private LinearLayout ll_message_container;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -62,7 +88,7 @@ public class MainActivity extends BaseTitleActivity implements View.OnClickListe
 
         vp = findViewById(R.id.vp);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer_layout,toolbar,R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer_layout.addDrawerListener(toggle);
         toggle.syncState();
     }
@@ -71,14 +97,43 @@ public class MainActivity extends BaseTitleActivity implements View.OnClickListe
     protected void initDatas() {
         super.initDatas();
 
+        EventBus.getDefault().register(this);
+
         List<Fragment> list = new ArrayList<>();
         list.add(new MeFragment());
         list.add(new MusicFragment());
         list.add(new VideoFragment());
 
-        adapter = new HomeAdapter(this,getSupportFragmentManager(),0);
+        adapter = new HomeAdapter(this, getSupportFragmentManager(), 0);
         adapter.setDatas(list);
         vp.setAdapter(adapter);
+
+        getUserInfo();
+    }
+
+    private void getUserInfo() {
+
+        if (sp.isLogin()) {
+            Api.getInstance().userDetail(sp.getUserId())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new HttpListener<DetailResponse<User>>(getActivity()) {
+                        @Override
+                        public void onSucceeded(DetailResponse<User> data) {
+                            super.onSucceeded(data);
+                            ImageUtil.showCircle(MainActivity.this,iv_avatar,data.getData().getAvatar());
+                            tv_nickname.setText(data.getData().getNickname());
+                            tv_description.setText(data.getData().getDescription());
+
+                        }
+                    });
+        } else {
+            iv_avatar.setImageResource(R.drawable.default_avatar);
+            tv_nickname.setText("请登录");
+            tv_description.setText("");
+
+        }
+
     }
 
     @Override
@@ -87,6 +142,8 @@ public class MainActivity extends BaseTitleActivity implements View.OnClickListe
         iv_music.setOnClickListener(this);
         iv_recommend.setOnClickListener(this);
         iv_video.setOnClickListener(this);
+        ll_settings.setOnClickListener(this);
+        iv_avatar.setOnClickListener(this);
 
         vp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -99,11 +156,11 @@ public class MainActivity extends BaseTitleActivity implements View.OnClickListe
                 iv_music.setImageResource(R.drawable.ic_play);
                 iv_recommend.setImageResource(R.drawable.ic_music);
                 iv_video.setImageResource(R.drawable.ic_video);
-                if (position == 0){
+                if (position == 0) {
                     iv_music.setImageResource(R.drawable.ic_play_selected);
-                }else if(position == 1){
+                } else if (position == 1) {
                     iv_recommend.setImageResource(R.drawable.ic_music_selected);
-                }else if(position ==2){
+                } else if (position == 2) {
                     iv_video.setImageResource(R.drawable.ic_video_selected);
                 }
             }
@@ -119,7 +176,7 @@ public class MainActivity extends BaseTitleActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.iv_music:
                 vp.setCurrentItem(0);
                 break;
@@ -129,7 +186,34 @@ public class MainActivity extends BaseTitleActivity implements View.OnClickListe
             case R.id.iv_video:
                 vp.setCurrentItem(2);
                 break;
+            case R.id.ll_settings:
+                closeDrawer();
+                startActivity(SettingsActivity.class);
+                break;
+            case R.id.iv_avatar:
+                closeDrawer();
+                avatarClick();
+                break;
+
         }
 
+    }
+
+    @SuppressLint("WrongConstant")
+    private void closeDrawer(){
+        drawer_layout.closeDrawer(Gravity.START);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void logoutSuccessEvent(LogoutSuccessEvent event){
+        getUserInfo();
+    }
+
+    private void avatarClick(){
+        if (sp.isLogin()){
+
+        }else {
+            startActivity(LoginActivity.class);
+        }
     }
 }

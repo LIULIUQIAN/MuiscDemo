@@ -49,13 +49,13 @@ public interface Service {
     Observable<DetailResponse<Session>> register(@Body User user);
 
 
-//    /**
-//     * 获取用户详情
-//     * @param id
-//     * @return
-//     */
-//    @GET("users/{id}.json")
-//    Observable<DetailResponse<User>> userDetail(@Path("id") String id);
+    /**
+     * 获取用户详情
+     * @param id
+     * @return
+     */
+    @GET("users/{id}.json")
+    Observable<DetailResponse<User>> userDetail(@Path("id") String id);
 //
 //    /**
 //     * 获取话题详情
@@ -65,15 +65,15 @@ public interface Service {
 //    @GET("topics/{id}.json")
 //    Observable<DetailResponse<Topic>> topicDetail(@Path("id") String id, @QueryMap Map<String, String> data);
 //
-//    /**
-//     * 根据nickname,获取用户详情
-//     * @param data
-//     * @return
-//     */
-//    @GET("users/-1.json")
-//    Observable<DetailResponse<User>> userDetailByNickname(@QueryMap Map<String, String> data);
-//
-//
+    /**
+     * 根据nickname,获取用户详情
+     * @param data
+     * @return
+     */
+    @GET("users/-1.json")
+    Observable<DetailResponse<User>> userDetailByNickname(@QueryMap Map<String, String> data);
+
+
 //
 //    /**
 //     * 歌单列表

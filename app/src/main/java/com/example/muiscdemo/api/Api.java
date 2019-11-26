@@ -107,15 +107,15 @@ public class Api {
         return service.logout(id);
     }
 
-//    public Observable<DetailResponse<User>> userDetail(String id) {
-//        return service.userDetail(id);
-//    }
-//
-//    public Observable<DetailResponse<User>> userDetailByNickname(String nickname) {
-//        HashMap<String, String> data = new HashMap<>();
-//        data.put(Consts.NICKNAME, nickname);
-//        return service.userDetailByNickname(data);
-//    }
+    public Observable<DetailResponse<User>> userDetail(String id) {
+        return service.userDetail(id);
+    }
+
+    public Observable<DetailResponse<User>> userDetailByNickname(String nickname) {
+        HashMap<String, String> data = new HashMap<>();
+        data.put(Consts.NICKNAME, nickname);
+        return service.userDetailByNickname(data);
+    }
 //
 //    public Observable<ListResponse<List>> lists() {
 //        HashMap<String, String> query = new HashMap<>();
