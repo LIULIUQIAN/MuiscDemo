@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.example.muiscdemo.activity.BaseTitleActivity;
 import com.example.muiscdemo.activity.LoginActivity;
 import com.example.muiscdemo.activity.SettingsActivity;
+import com.example.muiscdemo.activity.UserDetailActivity;
 import com.example.muiscdemo.adapter.HomeAdapter;
 import com.example.muiscdemo.api.Api;
 import com.example.muiscdemo.domain.Session;
@@ -191,7 +192,6 @@ public class MainActivity extends BaseTitleActivity implements View.OnClickListe
                 startActivity(SettingsActivity.class);
                 break;
             case R.id.iv_avatar:
-                closeDrawer();
                 avatarClick();
                 break;
 
@@ -210,8 +210,9 @@ public class MainActivity extends BaseTitleActivity implements View.OnClickListe
     }
 
     private void avatarClick(){
+        closeDrawer();
         if (sp.isLogin()){
-
+            startActivityExtraId(UserDetailActivity.class,sp.getUserId());
         }else {
             startActivity(LoginActivity.class);
         }
