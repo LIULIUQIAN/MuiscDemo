@@ -63,7 +63,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="关注"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
 
                     <Button
                         android:id="@+id/bt_send_message"
@@ -71,7 +71,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:text="发送消息"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -81,12 +81,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/transparent"
-                app:popupTheme="@style/AppTheme.PopupOverlay"/>
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </RelativeLayout>
 
-
+        <net.lucode.hackware.magicindicator.MagicIndicator
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tab_layout_height"
+            android:layout_gravity="bottom"
+            android:minHeight="@dimen/tab_layout_height"
+            android:paddingBottom="@dimen/button_padding"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed" />
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </LinearLayout>
