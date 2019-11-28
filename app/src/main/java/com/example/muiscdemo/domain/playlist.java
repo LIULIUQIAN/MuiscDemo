@@ -1,8 +1,16 @@
 package com.example.muiscdemo.domain;
 
+import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.example.muiscdemo.adapter.RecommendAdapter;
+
 import org.apache.commons.lang3.StringUtils;
 
-public class playlist extends Base {
+public class playlist extends Base implements MultiItemEntity {
+
+    @Override
+    public int getItemType() {
+        return RecommendAdapter.TYPE_LIST;
+    }
 
     /**
      * 歌单Id

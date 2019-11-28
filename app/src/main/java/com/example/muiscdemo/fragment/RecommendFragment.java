@@ -12,9 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.example.muiscdemo.R;
 import com.example.muiscdemo.adapter.RecommendAdapter;
 import com.example.muiscdemo.api.Api;
+import com.example.muiscdemo.domain.RecommendedTitle;
 import com.example.muiscdemo.domain.Song;
 import com.example.muiscdemo.domain.playlist;
 import com.example.muiscdemo.domain.response.ListResponse;
@@ -63,13 +65,23 @@ public class RecommendFragment extends BaseCommonFragment {
             }
         });
         rv.setLayoutManager(layoutManager);
+
+        adapter = new RecommendAdapter(new ArrayList());
+        rv.setAdapter(adapter);
+
+
+    }
+
+    private View createHeaderView(){
+        View headView = getLayoutInflater().inflate(R.layout.header_music_recommend, (ViewGroup) rv.getParent(),false);
+
+        return headView;
     }
 
     @Override
     protected void initDatas() {
         super.initDatas();
-        adapter = new RecommendAdapter(getActivity());
-        rv.setAdapter(adapter);
+
 
         fetchData();
     }
@@ -79,8 +91,8 @@ public class RecommendFragment extends BaseCommonFragment {
         Observable<ListResponse<playlist>> list = Api.getInstance().lists();
         final Observable<ListResponse<Song>> songs = Api.getInstance().songs();
 
-        final ArrayList<Object> datas = new ArrayList<>();
-        datas.add("推荐歌单");
+        final ArrayList<MultiItemEntity> datas = new ArrayList<>();
+        datas.add(new RecommendedTitle("推荐歌单"));
 
         list.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -97,11 +109,11 @@ public class RecommendFragment extends BaseCommonFragment {
                                     @Override
                                     public void onSucceeded(ListResponse<Song> data) {
                                         super.onSucceeded(data);
-                                        datas.add("推荐单曲");
+                                        datas.add(new RecommendedTitle("推荐单曲"));
                                         datas.addAll(data.getData());
 
-                                        adapter.setData(datas);
-
+                                        adapter.setNewData(datas);
+                                        
                                     }
                                 });
                     }

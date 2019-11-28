@@ -1,10 +1,18 @@
 package com.example.muiscdemo.domain;
 
+import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.example.muiscdemo.adapter.RecommendAdapter;
+
 import org.jetbrains.annotations.NotNull;
 
 import nl.qbusict.cupboard.annotation.Ignore;
 
-public class Song extends Base {
+public class Song extends Base implements MultiItemEntity {
+
+    @Override
+    public int getItemType() {
+        return RecommendAdapter.TYPE_SONG;
+    }
 
     public static final String[] SORT_KEYS=new String[]{"id","title","album_title"};
     /**

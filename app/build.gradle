@@ -96,5 +96,11 @@ dependencies {
     //LRecyclerView
 //    implementation 'com.github.jdsjlzx:LRecyclerView:1.5.4.3'
 
+    //    banner
+    implementation 'com.youth.banner:banner:1.4.10'
+
+    //BaseRecyclerViewAdapterHelper
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.49-androidx'
+
 
 }
