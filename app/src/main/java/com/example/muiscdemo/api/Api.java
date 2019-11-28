@@ -2,6 +2,7 @@ package com.example.muiscdemo.api;
 
 import com.example.muiscdemo.AppContext;
 import com.example.muiscdemo.BuildConfig;
+import com.example.muiscdemo.domain.Advertisement;
 import com.example.muiscdemo.domain.Session;
 import com.example.muiscdemo.domain.Song;
 import com.example.muiscdemo.domain.User;
@@ -277,10 +278,10 @@ public class Api {
 //    public Observable<DetailResponse<Video>> videoDetail(String id) {
 //        return service.videoDetail(id);
 //    }
-//
-//    public Observable<ListResponse<Advertisement>> advertisements() {
-//        return service.advertisements();
-//    }
+
+    public Observable<ListResponse<Advertisement>> advertisements() {
+        return service.advertisements();
+    }
 
     //public Observable<DetailResponse<Lyric>>  lyricDetailWithBySongId(String id) {
     //    HashMap<String, String> data = new HashMap<>();

@@ -22,4 +22,6 @@ public class RecommendedTitle implements MultiItemEntity {
     public void setTitle(String title) {
         this.title = title;
     }
+
+
 }

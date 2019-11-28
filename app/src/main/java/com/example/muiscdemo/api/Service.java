@@ -1,6 +1,7 @@
 package com.example.muiscdemo.api;
 
 
+import com.example.muiscdemo.domain.Advertisement;
 import com.example.muiscdemo.domain.Session;
 import com.example.muiscdemo.domain.Song;
 import com.example.muiscdemo.domain.User;
@@ -299,10 +300,10 @@ public interface Service {
 //  //  @GET("lyrics.json")
 //  //  Observable<DetailResponse<Lyric>> lyricDetailWithBySongId(@QueryMap Map<String, String> data);
 //
-//    /**
-//     * 广告列表
-//     * @return
-//     */
-//    @GET("advertisements.json")
-//    Observable<ListResponse<Advertisement>> advertisements();
+    /**
+     * 广告列表
+     * @return
+     */
+    @GET("advertisements.json")
+    Observable<ListResponse<Advertisement>> advertisements();
 }
