@@ -2,10 +2,14 @@ package com.example.muiscdemo.api;
 
 
 import com.example.muiscdemo.domain.Session;
+import com.example.muiscdemo.domain.Song;
 import com.example.muiscdemo.domain.User;
+import com.example.muiscdemo.domain.playlist;
 import com.example.muiscdemo.domain.response.DetailResponse;
+import com.example.muiscdemo.domain.response.ListResponse;
 
 
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
@@ -74,13 +78,13 @@ public interface Service {
     Observable<DetailResponse<User>> userDetailByNickname(@QueryMap Map<String, String> data);
 
 
-//
-//    /**
-//     * 歌单列表
-//     * @return
-//     */
-//    @GET("sheets.json")
-//    Observable<ListResponse<List>> lists(@QueryMap Map<String, String> data);
+
+    /**
+     * 歌单列表
+     * @return
+     */
+    @GET("sheets.json")
+    Observable<ListResponse<playlist>> lists(@QueryMap Map<String, String> data);
 //
 //    /**
 //     * 我创建的歌单列表
@@ -192,14 +196,14 @@ public interface Service {
 //    @DELETE("likes/{id}.json")
 //    Observable<DetailResponse<Comment>> unlike(@Path("id") String id);
 //
-//
-//    /**
-//     * 单曲列表
-//     * @return
-//     */
-//    @GET("songs.json")
-//    Observable<ListResponse<Song>> songs();
-//
+
+    /**
+     * 单曲列表
+     * @return
+     */
+    @GET("songs.json")
+    Observable<ListResponse<Song>> songs();
+
 //    /**
 //     * 获取歌曲详情
 //     * @param id

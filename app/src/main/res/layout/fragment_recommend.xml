@@ -5,14 +5,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <net.lucode.hackware.magicindicator.MagicIndicator
-        android:id="@+id/tabs"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/tab_layout_height"
-        android:background="@color/colorPrimary"/>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/vp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

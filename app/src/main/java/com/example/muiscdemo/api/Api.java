@@ -3,8 +3,11 @@ package com.example.muiscdemo.api;
 import com.example.muiscdemo.AppContext;
 import com.example.muiscdemo.BuildConfig;
 import com.example.muiscdemo.domain.Session;
+import com.example.muiscdemo.domain.Song;
 import com.example.muiscdemo.domain.User;
+import com.example.muiscdemo.domain.playlist;
 import com.example.muiscdemo.domain.response.DetailResponse;
+import com.example.muiscdemo.domain.response.ListResponse;
 import com.example.muiscdemo.interceptor.HttpLoggingInterceptor;
 import com.example.muiscdemo.util.Consts;
 import com.example.muiscdemo.util.SharedPreferencesUtil;
@@ -116,11 +119,11 @@ public class Api {
         data.put(Consts.NICKNAME, nickname);
         return service.userDetailByNickname(data);
     }
-//
-//    public Observable<ListResponse<List>> lists() {
-//        HashMap<String, String> query = new HashMap<>();
-//        return service.lists(query);
-//    }
+
+    public Observable<ListResponse<playlist>> lists() {
+        HashMap<String, String> query = new HashMap<>();
+        return service.lists(query);
+    }
 //
 //    public Observable<ListResponse<SearchHot>> prompt(String content) {
 //        HashMap<String, String> query = new HashMap<>();
@@ -187,9 +190,9 @@ public class Api {
 //        return service.listsMyCollection();
 //    }
 //
-//    public Observable<ListResponse<Song>> songs() {
-//        return service.songs();
-//    }
+    public Observable<ListResponse<Song>> songs() {
+        return service.songs();
+    }
 //
 //    public Observable<DetailResponse<Song>> songsDetail(String id) {
 //        return service.songsDetail(id);

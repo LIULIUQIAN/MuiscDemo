@@ -93,4 +93,8 @@ dependencies {
 //    implementation 'com.github.hackware1993:MagicIndicator:1.6.0'
     implementation project(':magicindicator')
 
+    //LRecyclerView
+//    implementation 'com.github.jdsjlzx:LRecyclerView:1.5.4.3'
+
+
 }
