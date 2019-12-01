@@ -1,5 +1,7 @@
 package com.example.muiscdemo.adapter;
 
+import android.widget.CompoundButton;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +27,6 @@ public class SongAdapter extends BaseQuickAdapter<Song, BaseViewHolder> {
         helper.setText(R.id.tv_position, String.valueOf(helper.getLayoutPosition() + 1));
         helper.setText(R.id.tv_title, item.getTitle());
         helper.setText(R.id.tv_info, item.getArtist().getNickname() + " - " + item.getAlbum().getTitle());
-
+        helper.addOnClickListener(R.id.iv_more);
     }
 }

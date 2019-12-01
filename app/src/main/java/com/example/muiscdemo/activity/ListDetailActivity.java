@@ -7,6 +7,7 @@ import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -18,11 +19,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.chad.library.adapter.base.listener.OnItemChildLongClickListener;
 import com.example.muiscdemo.R;
 import com.example.muiscdemo.adapter.SongAdapter;
 import com.example.muiscdemo.api.Api;
@@ -69,8 +74,21 @@ public class ListDetailActivity extends BaseTitleActivity {
 
         adapter = new SongAdapter(new ArrayList<>());
         rv.setAdapter(adapter);
-
         createHeaderView();
+
+//        rv.addOnItemTouchListener(new OnItemChildLongClickListener() {
+//            @Override
+//            public void onSimpleItemChildLongClick(BaseQuickAdapter adapter, View view, int position) {
+//
+//                System.out.println("==========");
+//            }
+//        });
+        rv.addOnItemTouchListener(new OnItemChildClickListener() {
+            @Override
+            public void onSimpleItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                Toast.makeText(ListDetailActivity.this, "" + Integer.toString(position), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void createHeaderView() {
@@ -151,6 +169,16 @@ public class ListDetailActivity extends BaseTitleActivity {
         tv_title.setText(data.getTitle());
         tv_nickname.setText(data.getUser().getNickname());
         tv_count.setText("共"+data.getSongs().size()+"首");
+        if (data.isCollection()){
+            bt_collection.setText("取消收藏");
+        }else {
+            bt_collection.setText("收藏歌单");
+        }
+        boolean isMySheet = data.getUser().getId().equals(sp.getUserId());
+        if (isMySheet){
+            bt_collection.setVisibility(View.GONE);
+        }
+
 
     }
 }
