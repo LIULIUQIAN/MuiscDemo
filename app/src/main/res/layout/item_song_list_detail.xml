@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_position"
+            android:layout_width="@dimen/item_song_height"
+            android:layout_height="@dimen/item_song_height"
+            android:gravity="center"
+            android:text="1" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/button_padding"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="歌曲名字"
+                android:textColor="@color/text" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/item_icon_padding"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:id="@+id/iv_downloaded"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_song_downloaded"
+                    android:layout_marginRight="5dp"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tv_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="歌曲名字"
+                    android:textColor="@color/text_grey"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_more"
+            android:layout_width="@dimen/item_song_height"
+            android:layout_height="@dimen/item_song_height"
+            android:src="@drawable/ic_more_grey"/>
+
+    </LinearLayout>
+
+    <include layout="@layout/divider_small" />
+</LinearLayout>

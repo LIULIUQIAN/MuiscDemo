@@ -50,7 +50,6 @@ public class RecommendAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity,
                 helper.setText(R.id.tv_count,String.valueOf(md.getClicks_count()));
                 helper.setText(R.id.tv_title,md.getTitle());
                 helper.setImageUrl(md.getBanner());
-
                 break;
             case TYPE_SONG:
                 Song song = (Song) item;

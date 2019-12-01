@@ -16,8 +16,12 @@ import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.chad.library.adapter.base.listener.SimpleClickListener;
 import com.example.muiscdemo.R;
 import com.example.muiscdemo.activity.BaseWebViewActivity;
+import com.example.muiscdemo.activity.ListDetailActivity;
 import com.example.muiscdemo.adapter.RecommendAdapter;
 import com.example.muiscdemo.api.Api;
 import com.example.muiscdemo.domain.Advertisement;
@@ -45,7 +49,7 @@ public class RecommendFragment extends BaseCommonFragment implements OnBannerLis
 
     private RecyclerView rv;
     private Banner banner;
-    private RecommendAdapter adapter;
+    private RecommendAdapter mAdapter;
     private GridLayoutManager layoutManager;
     private ArrayList<MultiItemEntity> datas = new ArrayList<>();
     private List<Advertisement> bannerData;
@@ -77,21 +81,37 @@ public class RecommendFragment extends BaseCommonFragment implements OnBannerLis
         layoutManager = new GridLayoutManager(getActivity(), 3);
         rv.setLayoutManager(layoutManager);
 
-        adapter = new RecommendAdapter(new ArrayList(), getContext());
-        rv.setAdapter(adapter);
-        adapter.setSpanSizeLookup(new BaseQuickAdapter.SpanSizeLookup() {
+        mAdapter = new RecommendAdapter(new ArrayList(), getContext());
+        rv.setAdapter(mAdapter);
+        mAdapter.setSpanSizeLookup(new BaseQuickAdapter.SpanSizeLookup() {
             @Override
             public int getSpanSize(GridLayoutManager gridLayoutManager, int position) {
                 int viewType = datas.get(position).getItemType();
 
-                if (viewType == adapter.TYPE_TITLE || viewType == adapter.TYPE_SONG) {
+                if (viewType == mAdapter.TYPE_TITLE || viewType == mAdapter.TYPE_SONG) {
                     return 3;
                 }
                 return 1;
             }
         });
 
-        adapter.setHeaderView(createHeaderView());
+        mAdapter.setHeaderView(createHeaderView());
+
+        rv.addOnItemTouchListener(new OnItemClickListener() {
+            @Override
+            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
+                int viewType = datas.get(position).getItemType();
+                String id = "";
+                if (viewType == mAdapter.TYPE_SONG) {
+                    Song song = (Song) datas.get(position);
+                    id = song.getId();
+                } else if (viewType == mAdapter.TYPE_LIST) {
+                    playlist md = (playlist) datas.get(position);
+                    id = md.getId();
+                }
+                startActivityExtraId(ListDetailActivity.class, id);
+            }
+        });
     }
 
     private View createHeaderView() {
@@ -135,7 +155,7 @@ public class RecommendFragment extends BaseCommonFragment implements OnBannerLis
                                         datas.add(new RecommendedTitle("推荐单曲"));
                                         datas.addAll(data.getData());
 
-                                        adapter.setNewData(datas);
+                                        mAdapter.setNewData(datas);
 
                                     }
                                 });
@@ -166,7 +186,7 @@ public class RecommendFragment extends BaseCommonFragment implements OnBannerLis
     public void OnBannerClick(int position) {
 
         Advertisement advertisement = bannerData.get(position);
-        BaseWebViewActivity.start(getMainActivity(),"活动详情",advertisement.getUri());
+        BaseWebViewActivity.start(getMainActivity(), "活动详情", advertisement.getUri());
 
     }
 
