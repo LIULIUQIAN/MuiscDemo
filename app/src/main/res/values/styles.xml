@@ -92,6 +92,21 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <!---->
+    <style name="ItemEntryContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/item_music_entry_height</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">@dimen/button_padding</item>
+        <item name="android:paddingRight">@dimen/button_padding</item>
+    </style>
+
+    <style name="ItemEntryTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:layout_marginLeft">@dimen/item_icon_padding</item>
+    </style>
 
 
 </resources>

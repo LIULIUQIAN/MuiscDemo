@@ -4,20 +4,25 @@ import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.example.muiscdemo.R;
 import com.example.muiscdemo.domain.Song;
+import com.example.muiscdemo.fragment.SongMoreDialogFragment;
 
 import java.util.List;
 
 public class SongAdapter extends BaseQuickAdapter<Song, BaseViewHolder> {
 
 
-    public SongAdapter(@Nullable List<Song> data) {
+    private final FragmentManager fragmentManager;
+
+    public SongAdapter(@Nullable List<Song> data,FragmentManager fragmentManager) {
         super(R.layout.item_song_list_detail, data);
+        this.fragmentManager = fragmentManager;
     }
 
 

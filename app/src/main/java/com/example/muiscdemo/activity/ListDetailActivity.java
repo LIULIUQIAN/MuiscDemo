@@ -28,11 +28,14 @@ import com.bumptech.glide.request.transition.Transition;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.chad.library.adapter.base.listener.OnItemChildLongClickListener;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.example.muiscdemo.R;
 import com.example.muiscdemo.adapter.SongAdapter;
 import com.example.muiscdemo.api.Api;
+import com.example.muiscdemo.domain.Song;
 import com.example.muiscdemo.domain.playlist;
 import com.example.muiscdemo.domain.response.DetailResponse;
+import com.example.muiscdemo.fragment.SongMoreDialogFragment;
 import com.example.muiscdemo.reactivex.HttpListener;
 import com.example.muiscdemo.util.Consts;
 import com.example.muiscdemo.util.ImageUtil;
@@ -72,27 +75,44 @@ public class ListDetailActivity extends BaseTitleActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(layoutManager);
 
-        adapter = new SongAdapter(new ArrayList<>());
+        adapter = new SongAdapter(new ArrayList<>(), getSupportFragmentManager());
         rv.setAdapter(adapter);
         createHeaderView();
 
-//        rv.addOnItemTouchListener(new OnItemChildLongClickListener() {
-//            @Override
-//            public void onSimpleItemChildLongClick(BaseQuickAdapter adapter, View view, int position) {
-//
-//                System.out.println("==========");
-//            }
-//        });
         rv.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
             public void onSimpleItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                Toast.makeText(ListDetailActivity.this, "" + Integer.toString(position), Toast.LENGTH_SHORT).show();
+
+                SongMoreDialogFragment.show(getSupportFragmentManager(), (Song) adapter.getItem(position), new SongMoreDialogFragment.OnMoreListener() {
+                    @Override
+                    public void onCollectionClick(Song song) {
+                        System.out.println("收藏");
+                    }
+
+                    @Override
+                    public void onDownloadClick(Song song) {
+                        System.out.println("下载");
+                    }
+
+                    @Override
+                    public void onDeleteClick(Song song) {
+                        System.out.println("删除");
+                    }
+                });
             }
         });
+        rv.addOnItemTouchListener(new OnItemClickListener() {
+            @Override
+            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Song songModel = (Song) adapter.getItem(position);
+                System.out.println(songModel.getAlbum().getTitle());
+            }
+        });
+
     }
 
     private void createHeaderView() {
-        View headerView = getLayoutInflater().inflate(R.layout.header_song_detail, (ViewGroup) rv.getParent(),false);
+        View headerView = getLayoutInflater().inflate(R.layout.header_song_detail, (ViewGroup) rv.getParent(), false);
         header_container = headerView.findViewById(R.id.header_container);
         bt_collection = headerView.findViewById(R.id.bt_collection);
         iv_icon = headerView.findViewById(R.id.iv_icon);
@@ -116,7 +136,7 @@ public class ListDetailActivity extends BaseTitleActivity {
         Api.getInstance().listDetail(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new HttpListener<DetailResponse<playlist>>(getActivity()){
+                .subscribe(new HttpListener<DetailResponse<playlist>>(getActivity()) {
                     @Override
                     public void onSucceeded(DetailResponse<playlist> data) {
                         super.onSucceeded(data);
@@ -135,7 +155,7 @@ public class ListDetailActivity extends BaseTitleActivity {
             bitmapRequestBuilder = Glide.with(this).asBitmap().load(ImageUtil.getImageURI(data.getBanner()));
         }
 
-        bitmapRequestBuilder.into(new CustomTarget<Bitmap>(){
+        bitmapRequestBuilder.into(new CustomTarget<Bitmap>() {
 
             @Override
             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -144,7 +164,7 @@ public class ListDetailActivity extends BaseTitleActivity {
                     @Override
                     public void onGenerated(@Nullable Palette palette) {
                         Palette.Swatch swatch = palette.getVibrantSwatch();
-                        if (swatch != null){
+                        if (swatch != null) {
                             int rgb = swatch.getRgb();
                             header_container.setBackgroundColor(rgb);
                             toolbar.setBackgroundColor(rgb);
@@ -168,14 +188,14 @@ public class ListDetailActivity extends BaseTitleActivity {
 
         tv_title.setText(data.getTitle());
         tv_nickname.setText(data.getUser().getNickname());
-        tv_count.setText("共"+data.getSongs().size()+"首");
-        if (data.isCollection()){
+        tv_count.setText("共" + data.getSongs().size() + "首");
+        if (data.isCollection()) {
             bt_collection.setText("取消收藏");
-        }else {
+        } else {
             bt_collection.setText("收藏歌单");
         }
         boolean isMySheet = data.getUser().getId().equals(sp.getUserId());
-        if (isMySheet){
+        if (isMySheet) {
             bt_collection.setVisibility(View.GONE);
         }
 
