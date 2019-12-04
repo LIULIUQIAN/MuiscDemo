@@ -212,20 +212,16 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
 
                 if (song == null) {
                     //表示没找到，可能各种原因
-                    defaultPlaySong();
+                    currentSong = datum.get(0);
                 } else {
                     currentSong = song;
                 }
             } else {
-                defaultPlaySong();
+                currentSong = datum.get(0);
             }
         }
 
 
-    }
-
-    private void defaultPlaySong() {
-        currentSong = datum.get(0);
     }
 
     public static synchronized PlayListManager getInstance(Context context) {
@@ -558,7 +554,6 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
                 play(next);
             }
 
-
         }
     }
 
@@ -657,7 +652,5 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
         }
 
     }
-
-
 
 }

@@ -180,13 +180,13 @@ public class RecordView extends View {
             Glide.with(this)
                     .asBitmap()
                     .load(ImageUtil.getImageURI(this.albumUri))
+                    .apply(options)
                     .into(new CustomTarget<Bitmap>() {
 
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             album = ImageUtil.resizeImage(resource, albumWidth, albumWidth);
                             invalidate();
-
                         }
 
                         @Override

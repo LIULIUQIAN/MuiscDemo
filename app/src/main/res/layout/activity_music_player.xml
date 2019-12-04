@@ -47,10 +47,42 @@
 
                 <!--歌词view-->
                 <LinearLayout
+                    android:id="@+id/lyric_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:orientation="vertical"
                     android:visibility="gone">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginRight="25dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_music_volume" />
+
+                        <SeekBar
+                            android:id="@+id/sb_volume"
+                            style="@style/MusicSeekBar"
+                            android:layout_width="0dp"
+                            android:layout_weight="1" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="歌词显示"/>
+
+                    <!--<com.ixuea.courses.mymusic.view.ListLyricView-->
+                        <!--android:id="@+id/lv"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="match_parent" />-->
                 </LinearLayout>
 
                 <RelativeLayout
@@ -62,8 +94,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
 
+                    <com.example.muiscdemo.view.RecordView
+                        android:id="@+id/rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
                     <androidx.viewpager.widget.ViewPager
                         android:id="@+id/vp"
+                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
 

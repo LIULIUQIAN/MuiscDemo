@@ -26,13 +26,6 @@ public class MusicPlayerService extends Service {
         return manager;
     }
 
-    private static void startService(Context context){
-        if (!ServiceUtil.isServiceRunning(context)){
-            Intent service = new Intent(context, MusicPlayerService.class);
-            context.startService(service);
-        }
-    }
-
     /**
      * 获取一个PlayListManager对象
      * @param context
@@ -47,6 +40,15 @@ public class MusicPlayerService extends Service {
         }
         return playListManager;
     }
+
+    private static void startService(Context context){
+        if (!ServiceUtil.isServiceRunning(context)){
+            Intent service = new Intent(context, MusicPlayerService.class);
+            context.startService(service);
+        }
+    }
+
+
 
     public MusicPlayerService() {
     }

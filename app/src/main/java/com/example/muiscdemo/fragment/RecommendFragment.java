@@ -22,6 +22,7 @@ import com.chad.library.adapter.base.listener.SimpleClickListener;
 import com.example.muiscdemo.R;
 import com.example.muiscdemo.activity.BaseWebViewActivity;
 import com.example.muiscdemo.activity.ListDetailActivity;
+import com.example.muiscdemo.activity.MusicPlayerActivity;
 import com.example.muiscdemo.adapter.RecommendAdapter;
 import com.example.muiscdemo.api.Api;
 import com.example.muiscdemo.domain.Advertisement;
@@ -29,7 +30,10 @@ import com.example.muiscdemo.domain.RecommendedTitle;
 import com.example.muiscdemo.domain.Song;
 import com.example.muiscdemo.domain.playlist;
 import com.example.muiscdemo.domain.response.ListResponse;
+import com.example.muiscdemo.manager.MusicPlayerManager;
+import com.example.muiscdemo.manager.PlayListManager;
 import com.example.muiscdemo.reactivex.HttpListener;
+import com.example.muiscdemo.service.MusicPlayerService;
 import com.example.muiscdemo.util.ImageUtil;
 import com.youth.banner.Banner;
 import com.youth.banner.listener.OnBannerListener;
@@ -55,6 +59,7 @@ public class RecommendFragment extends BaseCommonFragment implements OnBannerLis
     private ArrayList<MultiItemEntity> datas = new ArrayList<>();
     private List<Advertisement> bannerData;
 
+    private PlayListManager playListManager;
 
     @Override
     protected View getLayoutView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -102,15 +107,21 @@ public class RecommendFragment extends BaseCommonFragment implements OnBannerLis
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 int viewType = datas.get(position).getItemType();
-                String id = "";
+
                 if (viewType == mAdapter.TYPE_SONG) {
                     Song song = (Song) datas.get(position);
-                    id = song.getId();
+                    ArrayList<Song> list = new ArrayList<>();
+                    list.add(song);
+                    playListManager.setPlayList(list);
+                    playListManager.play(song);
+                    startActivity(MusicPlayerActivity.class);
+
+
                 } else if (viewType == mAdapter.TYPE_LIST) {
                     playlist md = (playlist) datas.get(position);
-                    id = md.getId();
+                    startActivityExtraId(ListDetailActivity.class, md.getId());
                 }
-                startActivityExtraId(ListDetailActivity.class, id);
+
             }
         });
     }
@@ -125,6 +136,8 @@ public class RecommendFragment extends BaseCommonFragment implements OnBannerLis
     @Override
     protected void initDatas() {
         super.initDatas();
+
+        playListManager = MusicPlayerService.getPlayListManager(getActivity().getApplicationContext());
 
         fetchData();
         banner.setImageLoader(new GlideImageLoader());
