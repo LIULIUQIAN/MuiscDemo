@@ -36,6 +36,7 @@ import com.youth.banner.listener.OnBannerListener;
 import com.youth.banner.loader.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -153,6 +154,7 @@ public class RecommendFragment extends BaseCommonFragment implements OnBannerLis
                                     public void onSucceeded(ListResponse<Song> data) {
                                         super.onSucceeded(data);
                                         datas.add(new RecommendedTitle("推荐单曲"));
+
                                         datas.addAll(data.getData());
 
                                         mAdapter.setNewData(datas);

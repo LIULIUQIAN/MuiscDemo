@@ -3,12 +3,15 @@ package com.example.muiscdemo.util;
 import android.content.Context;
 
 
+import com.example.muiscdemo.domain.Song;
 import com.litesuits.orm.LiteOrm;
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.litesuits.orm.db.assit.WhereBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import nl.qbusict.cupboard.DatabaseCompartment;
 
 /**
  * Created by smile on 06/03/2018.
@@ -19,7 +22,7 @@ public class OrmUtil {
     private static OrmUtil instance;
 
     public OrmUtil(Context context) {
-        orm = LiteOrm.newSingleInstance(context, "ixuea-music.db");
+        orm = LiteOrm.newSingleInstance(context, "yun-music.db");
     }
 
     public static OrmUtil getInstance(Context context) {
@@ -29,54 +32,54 @@ public class OrmUtil {
         return instance;
     }
 
-//    public void saveSong(Song song, String userId) {
-//        song.setUserId(userId);
-//        orm.save(song);
-//    }
-//
-//    public void deleteSongs(String userId) {
-//        orm.delete(new WhereBuilder(Song.class)
-//                .where("userId=?", new String[]{userId}));
-//    }
-//
-//    public List<Song> queryPlayList(String userId) {
-//        ArrayList<Song> songs = orm
-//                .query(new QueryBuilder<Song>(Song.class)
-//                        .whereEquals("userId", userId)
-//                        .whereAppendAnd()
-//                        .whereEquals("playList", true)
-//                        .appendOrderAscBy("id"));
-//
-//        return songs;
-//    }
-//
-//    public void deleteSong(Song song) {
-//        orm.delete(song);
-//    }
-//
-//    public List<Song> queryLocalMusic(String userId, String orderBy) {
-//        ArrayList<Song> songs = orm
-//                .query(new QueryBuilder<Song>(Song.class)
-//                        .whereEquals("userId", userId)
-//                        .whereAppendAnd()
-//                        .whereEquals("source", Song.SOURCE_LOCAL)
-//                        .appendOrderAscBy(orderBy));
-//
-//        return songs;
-//    }
-//
-//    public int countOfLocalMusic(String userId) {
-//        return (int) orm.queryCount(new QueryBuilder<Song>(Song.class)
-//                .whereEquals("userId", userId)
-//                .whereAppendAnd()
-//                .whereEquals("source", Song.SOURCE_LOCAL));
-//
-//    }
-//
-//    public Song findSongById(String id) {
-//        return orm.queryById(id,Song.class);
-//    }
-//
+    public void saveSong(Song song, String userId) {
+        song.setUserId(userId);
+        orm.save(song);
+    }
+
+    public void deleteSongs(String userId) {
+        orm.delete(new WhereBuilder(Song.class)
+                .where("userId=?", userId));
+    }
+
+    public List<Song> queryPlayList(String userId) {
+        ArrayList<Song> songs = orm
+                .query(new QueryBuilder<Song>(Song.class)
+                        .whereEquals("userId", userId)
+                        .whereAppendAnd()
+                        .whereEquals("playList", true)
+                        .appendOrderAscBy("id"));
+
+        return songs;
+    }
+
+    public void deleteSong(Song song) {
+        orm.delete(song);
+    }
+
+    public List<Song> queryLocalMusic(String userId, String orderBy) {
+        ArrayList<Song> songs = orm
+                .query(new QueryBuilder<Song>(Song.class)
+                        .whereEquals("userId", userId)
+                        .whereAppendAnd()
+                        .whereEquals("source", Song.SOURCE_LOCAL)
+                        .appendOrderAscBy(orderBy));
+
+        return songs;
+    }
+
+    public int countOfLocalMusic(String userId) {
+        return (int) orm.queryCount(new QueryBuilder<Song>(Song.class)
+                .whereEquals("userId", userId)
+                .whereAppendAnd()
+                .whereEquals("source", Song.SOURCE_LOCAL));
+
+    }
+
+    public Song findSongById(String id) {
+        return orm.queryById(id, Song.class);
+    }
+
 //    public List<SearchHistory> queryAllSearchHistory() {
 //        return orm.query(new QueryBuilder<SearchHistory>(SearchHistory.class).appendOrderDescBy("created_at"));
 //    }

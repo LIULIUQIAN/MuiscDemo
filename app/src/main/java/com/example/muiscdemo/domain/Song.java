@@ -2,17 +2,14 @@ package com.example.muiscdemo.domain;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.example.muiscdemo.adapter.RecommendAdapter;
+import com.litesuits.orm.db.annotation.Ignore;
+import com.litesuits.orm.db.annotation.NotNull;
+import com.litesuits.orm.db.annotation.PrimaryKey;
+import com.litesuits.orm.db.annotation.Table;
+import com.litesuits.orm.db.enums.AssignType;
 
-import org.jetbrains.annotations.NotNull;
-
-import nl.qbusict.cupboard.annotation.Ignore;
-
-public class Song extends Base implements MultiItemEntity {
-
-    @Override
-    public int getItemType() {
-        return RecommendAdapter.TYPE_SONG;
-    }
+@Table("songs")
+public class Song  extends Base implements MultiItemEntity {
 
     public static final String[] SORT_KEYS=new String[]{"id","title","album_title"};
     /**
@@ -33,6 +30,7 @@ public class Song extends Base implements MultiItemEntity {
     /**
      * 主键，使用当前Id的值
      */
+    @PrimaryKey(AssignType.BY_MYSELF)
     private String id;
 
     /**
@@ -59,7 +57,7 @@ public class Song extends Base implements MultiItemEntity {
     /**
      * 艺术家，服务端返回数据
      */
-    @Ignore
+    @com.litesuits.orm.db.annotation.Ignore
     private User artist;
 
     /**
@@ -85,7 +83,7 @@ public class Song extends Base implements MultiItemEntity {
     /**
      * 歌词,服务端返回数据
      */
-    @Ignore
+    @com.litesuits.orm.db.annotation.Ignore
     private Lyric lyric;
 
     /**
@@ -380,10 +378,6 @@ public class Song extends Base implements MultiItemEntity {
         this.album_title=album.getTitle();
         this.album_banner=album.getBanner();
 
-        //this.album_artist_id=album.getArtist().getId();
-        //this.album_artist_name=album.getArtist().getNickname();
-        //this.album_released_at=album.getReleased_at();
-
         //歌曲艺术家
         this.artist_id=artist.getId();
         this.artist_name=artist.getNickname();
@@ -400,5 +394,10 @@ public class Song extends Base implements MultiItemEntity {
 
     public boolean isLocal() {
         return source == SOURCE_LOCAL;
+    }
+
+    @Override
+    public int getItemType() {
+        return RecommendAdapter.TYPE_SONG;
     }
 }
