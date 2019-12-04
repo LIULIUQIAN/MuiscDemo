@@ -14,6 +14,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -41,14 +42,11 @@ import com.example.muiscdemo.service.MusicPlayerService;
 import com.example.muiscdemo.util.AlbumDrawableUtil;
 import com.example.muiscdemo.util.ImageUtil;
 import com.example.muiscdemo.util.TimeUtil;
+import com.example.muiscdemo.view.ListLyricView;
 import com.example.muiscdemo.view.RecordThumbView;
 import com.example.muiscdemo.view.RecordView;
-import com.facebook.stetho.common.StringUtil;
 
 import org.apache.commons.lang3.StringUtils;
-import org.greenrobot.eventbus.EventBus;
-
-import java.util.concurrent.TimeUnit;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
@@ -71,7 +69,7 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
     private LinearLayout lyric_container;
     private RelativeLayout rl_player_container;
     private SeekBar sb_volume;
-    //    private ListLyricView lv;
+    private ListLyricView lv;
     private ViewPager vp;
 
     private MusicPlayerManager musicPlayerManager;
@@ -127,10 +125,10 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
         iv_previous = findViewById(R.id.iv_previous);
         iv_play_list = findViewById(R.id.iv_play_list);
         rv = findViewById(R.id.rv);
-//        lyric_container = findViewById(R.id.lyric_container);
+        lyric_container = findViewById(R.id.lyric_container);
         rl_player_container = findViewById(R.id.rl_player_container);
         sb_volume = findViewById(R.id.sb_volume);
-//        lv = findViewById(R.id.lv);
+        lv = findViewById(R.id.lv);
 
         vp = findViewById(R.id.vp);
 
@@ -194,23 +192,20 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
         iv_previous.setOnClickListener(this);
         iv_next.setOnClickListener(this);
         sb_progress.setOnSeekBarChangeListener(this);
-        rv.setOnClickListener(this);
 
         //由于歌词控件内部使用了RecyclerView
         //直接给ListLyricView设置点击，长按
         //事件是无效的，因为内部的RecyclerView拦截了
         //解决方法是监听Item点击，然后通过接口回调（当然也可以使用EventBus）回来
-        //rv.setOnClickListener(this);
-        //lv.setOnClickListener(this);
+        rv.setOnClickListener(this);
+        lv.setOnClickListener(this);
         sb_volume.setOnSeekBarChangeListener(this);
 
-//        lv.setLyricListener(this);
 //
 //        lv.setOnLyricClickListener(this);
         playListManager.addPlayListListener(this);
 
         vp.addOnPageChangeListener(this);
-
 
     }
 
@@ -238,6 +233,12 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
                 break;
             case R.id.iv_download:
                 download();
+                break;
+            case R.id.rv:
+                showLyricView();
+                break;
+            case R.id.lv:
+                showRecordView();
                 break;
         }
 
@@ -397,5 +398,24 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
 
         }
 
+    }
+
+    private void showRecordView() {
+        lyric_container.setVisibility(View.GONE);
+        rl_player_container.setVisibility(View.VISIBLE);
+    }
+
+    private void showLyricView() {
+        lyric_container.setVisibility(View.VISIBLE);
+        rl_player_container.setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (KeyEvent.KEYCODE_VOLUME_UP == keyCode || KeyEvent.KEYCODE_VOLUME_DOWN == keyCode){
+            setVolume();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
