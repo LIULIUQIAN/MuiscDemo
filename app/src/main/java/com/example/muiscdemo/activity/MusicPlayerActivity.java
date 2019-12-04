@@ -38,6 +38,7 @@ import com.example.muiscdemo.listener.PlayListListener;
 import com.example.muiscdemo.manager.MusicPlayerManager;
 import com.example.muiscdemo.manager.PlayListManager;
 import com.example.muiscdemo.manager.impl.PlayListManagerImpl;
+import com.example.muiscdemo.parser.LyricsParser;
 import com.example.muiscdemo.service.MusicPlayerService;
 import com.example.muiscdemo.util.AlbumDrawableUtil;
 import com.example.muiscdemo.util.ImageUtil;
@@ -79,6 +80,8 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
     private MusicPlayerAdapter adapter;
     private PlayListManager playListManager;
     private Song currentSong;
+
+    private LyricsParser parser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +127,7 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
         iv_next = findViewById(R.id.iv_next);
         iv_previous = findViewById(R.id.iv_previous);
         iv_play_list = findViewById(R.id.iv_play_list);
-        rv = findViewById(R.id.rv);
+        rv = findViewById(R.id.mrv);
         lyric_container = findViewById(R.id.lyric_container);
         rl_player_container = findViewById(R.id.rl_player_container);
         sb_volume = findViewById(R.id.sb_volume);
@@ -157,6 +160,12 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
     }
 
     private void setLyric(Lyric lyric) {
+        parser = LyricsParser.parse(lyric.getStyle(),lyric.getContent());
+        parser.parse();
+
+        if (parser.getLyric() != null){
+            lv.setData(parser.getLyric());
+        }
 
     }
 
@@ -234,7 +243,7 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
             case R.id.iv_download:
                 download();
                 break;
-            case R.id.rv:
+            case R.id.mrv:
                 showLyricView();
                 break;
             case R.id.lv:
@@ -275,7 +284,7 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
     /**/
     @Override
     public void onDataReady(Song song) {
-
+        setLyric(song.getLyric());
     }
 
     /*viewpage*/

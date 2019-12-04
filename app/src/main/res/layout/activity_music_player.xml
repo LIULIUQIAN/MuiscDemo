@@ -93,7 +93,7 @@
                         android:layout_height="match_parent" />
 
                     <com.example.muiscdemo.view.RecordView
-                        android:id="@+id/rv"
+                        android:id="@+id/mrv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
 
