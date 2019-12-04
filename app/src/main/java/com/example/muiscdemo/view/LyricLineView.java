@@ -104,6 +104,35 @@ public class LyricLineView extends View {
         float centerX = (getMeasuredWidth() - textWidth)/2;
         canvas.drawText(line.getLineLyrics(),centerX,centerY,backgroundTextPaint);
 
+        if (!isSelected){
+            canvas.restore();
+            return;
+        }
+        if (isAccurate){
+
+            if (lyricCurrentWordIndex == -1){
+                lineLyricPlayedWidth = textWidth;
+            }else {
+                String[] lyricsWord = line.getLyricsWord();
+                int[] wordDuration = line.getWordDuration();
+                //获取当前时间前面的文字
+                String beforeText = line.getLineLyrics().substring(0,lyricCurrentWordIndex);
+                float beforeTextWidth = getTextWidth(foregroundTextPaint,beforeText);
+
+                //获取当前字
+                String currentWord = lyricsWord[lyricCurrentWordIndex];
+                float currentWordTextWidth = getTextWidth(foregroundTextPaint,currentWord);
+
+                float currentWordWidth = currentWordTextWidth/wordDuration[lyricCurrentWordIndex];
+                lineLyricPlayedWidth = beforeTextWidth + currentWordWidth;
+            }
+
+            canvas.clipRect(centerX,0,centerX+lineLyricPlayedWidth,getMeasuredHeight());
+            canvas.drawText(line.getLineLyrics(),centerX,centerY,foregroundTextPaint);
+
+        }else {
+            canvas.drawText(line.getLineLyrics(),centerX,centerY,foregroundTextPaint);
+        }
 
         canvas.restore();
     }

@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,7 +24,7 @@ import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ListLyricView extends LinearLayout implements ViewTreeObserver.OnGlobalLayoutListener {
+public class ListLyricView extends LinearLayout implements ViewTreeObserver.OnGlobalLayoutListener, View.OnClickListener {
 
     /**
      * 事件类型
@@ -115,6 +116,20 @@ public class ListLyricView extends LinearLayout implements ViewTreeObserver.OnGl
 
     private void initListeners() {
 
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+
+        ib_lyric_play.setOnClickListener(this);
+
     }
 
     private void initViews() {
@@ -138,7 +153,7 @@ public class ListLyricView extends LinearLayout implements ViewTreeObserver.OnGl
 
     @Override
     public void onGlobalLayout() {
-
+        lyricItemOffset = rv.getHeight()/2;
     }
 
     /* 设置歌词数据*/
@@ -163,7 +178,58 @@ public class ListLyricView extends LinearLayout implements ViewTreeObserver.OnGl
         adapter.setNewData(valueList);
     }
 
+    @Override
+    public void onClick(View v) {
 
+    }
+
+    /*设置歌词监听器*/
+    public void setOnLyricClickListener(OnLyricClickListener onLyricClickListener) {
+        this.onLyricClickListener = onLyricClickListener;
+    }
+
+    /*根据传递进来的时间显示对应的歌词*/
+    public void show(long position){
+        if (lyric==null){
+            return;
+        }
+        //如果手动拖拽时，就不滚动
+        if (isDrag){
+            return;
+        }
+
+        int newLineNumber = lyric.getLineNumber(position)+DEFAULT_FILL_LYRIC_COUNT;
+        if (newLineNumber != lineNumber){
+            scrollToPosition(newLineNumber);
+            this.lineNumber=newLineNumber;
+        }
+
+        if (lyric.isAccurate()){
+            int realNumber = lineNumber - DEFAULT_FILL_LYRIC_COUNT;
+            int lyricCurrentWordIndex = lyric.getWordIndex(realNumber,position);
+            float wordPlayedTime = lyric.getWordPlayedTime(realNumber,position);
+
+            View view = layoutManager.findViewByPosition(lineNumber);
+            if (view != null){
+                LyricLineView llv = view.findViewById(R.id.llv);
+                llv.setLyricCurrentWordIndex(lyricCurrentWordIndex);
+                llv.setWordPlayedTime(wordPlayedTime);
+                llv.show(position);
+            }
+
+        }
+
+    }
+
+    private void scrollToPosition(int lineNumber){
+
+        adapter.setSelectedIndex(lineNumber);
+
+        if (lyricItemOffset > 0){
+            layoutManager.scrollToPositionWithOffset(lineNumber,lyricItemOffset);
+        }
+
+    }
 
     /**
      * 歌词View监听器

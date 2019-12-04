@@ -308,7 +308,7 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
     public void onProgress(long progress, long total) {
         tv_start_time.setText(TimeUtil.formatMSTime((int) progress));
         sb_progress.setProgress((int) progress);
-
+        lv.show(progress);
     }
 
     @Override
