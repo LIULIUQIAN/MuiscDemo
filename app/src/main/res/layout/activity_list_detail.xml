@@ -12,6 +12,9 @@
         android:id="@+id/rv"
         android:background="@color/bg"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <include layout="@layout/item_play_small_controller" />
 
 </LinearLayout>

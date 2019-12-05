@@ -36,10 +36,7 @@ import com.example.muiscdemo.domain.Song;
 import com.example.muiscdemo.domain.playlist;
 import com.example.muiscdemo.domain.response.DetailResponse;
 import com.example.muiscdemo.fragment.SongMoreDialogFragment;
-import com.example.muiscdemo.manager.MusicPlayerManager;
-import com.example.muiscdemo.manager.PlayListManager;
 import com.example.muiscdemo.reactivex.HttpListener;
-import com.example.muiscdemo.service.MusicPlayerService;
 import com.example.muiscdemo.util.Consts;
 import com.example.muiscdemo.util.ImageUtil;
 
@@ -47,11 +44,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class ListDetailActivity extends BaseTitleActivity {
+public class ListDetailActivity extends BaseMusicPlayerActivity {
 
     private RecyclerView rv;
     private LinearLayout header_container;
@@ -63,8 +59,6 @@ public class ListDetailActivity extends BaseTitleActivity {
     private SongAdapter adapter;
     private String id;
 
-    protected PlayListManager playListManager;
-    protected MusicPlayerManager musicPlayerManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,10 +133,6 @@ public class ListDetailActivity extends BaseTitleActivity {
     protected void initDatas() {
         super.initDatas();
         id = getIntent().getStringExtra(Consts.ID);
-
-        playListManager = MusicPlayerService.getPlayListManager(getApplicationContext());
-        musicPlayerManager = MusicPlayerService.getMusicPlayerManager(getApplicationContext());
-
 
         fetchData();
     }
