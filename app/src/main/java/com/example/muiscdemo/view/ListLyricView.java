@@ -2,6 +2,8 @@ package com.example.muiscdemo.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -13,16 +15,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.chad.library.adapter.base.listener.OnItemLongClickListener;
 import com.example.muiscdemo.R;
 import com.example.muiscdemo.adapter.LyricAdapter;
 import com.example.muiscdemo.listener.OnLyricClickListener;
 import com.example.muiscdemo.parser.domain.Line;
 import com.example.muiscdemo.parser.domain.Lyric;
+import com.example.muiscdemo.util.TimeUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static androidx.viewpager.widget.ViewPager.SCROLL_STATE_DRAGGING;
+import static androidx.viewpager.widget.ViewPager.SCROLL_STATE_IDLE;
 
 public class ListLyricView extends LinearLayout implements ViewTreeObserver.OnGlobalLayoutListener, View.OnClickListener {
 
@@ -120,25 +129,98 @@ public class ListLyricView extends LinearLayout implements ViewTreeObserver.OnGl
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+                if (newState == SCROLL_STATE_DRAGGING) {
+                    //拖拽状态
+                    showDragView();
+                } else if (newState == SCROLL_STATE_IDLE) {
+                    //空闲状态
+                    prepareShowScrollLyricView();
+                }
             }
 
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()+DEFAULT_FILL_LYRIC_COUNT-1;
+                if (isDrag){
+                    Object data = adapter.getItem(firstVisibleItemPosition);
+                    if (data instanceof String){
+                        if (firstVisibleItemPosition < DEFAULT_FILL_LYRIC_COUNT){
+                            scrollSelectedLyricLine = (Line) adapter.getItem(DEFAULT_FILL_LYRIC_COUNT);
+                        }else {
+                            scrollSelectedLyricLine = (Line) adapter.getItem(adapter.getItemCount() - DEFAULT_FILL_LYRIC_COUNT - 1);
+                        }
+                    }else {
+                        scrollSelectedLyricLine = (Line) data;
+                    }
+
+                    tv_lyric_time.setText(TimeUtil.parseString((int) scrollSelectedLyricLine.getStartTime()));
+                }
+
             }
         });
 
         ib_lyric_play.setOnClickListener(this);
 
+        rv.addOnItemTouchListener(new OnItemClickListener() {
+            @Override
+            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (lyricListener != null){
+                    lyricListener.onLyricItemClick(position);
+                }
+            }
+        });
+
+        rv.addOnItemTouchListener(new OnItemLongClickListener() {
+            @Override
+            public void onSimpleItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                if (lyricListener != null){
+                    lyricListener.onLyricItemLongClick(position);
+                }
+            }
+        });
+
+
+    }
+
+    private void showDragView() {
+        isDrag = true;
+        ll_lyric_drag_container.setVisibility(View.VISIBLE);
+    }
+
+    private void prepareShowScrollLyricView() {
+        cancelTask();
+
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.obtainMessage(MSG_HIDE_TIME_LINE).sendToTarget();
+            }
+        };
+        timer = new Timer();
+        timer.schedule(timerTask, DEFAULT_HIDE_DRAG_TIME);
+
+    }
+
+    private void cancelTask() {
+        if (timerTask != null) {
+            timerTask.cancel();
+            timerTask = null;
+        }
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
     }
 
     private void initViews() {
         View.inflate(getContext(), R.layout.layout_list_lyric_view, this);
 
         ll_lyric_drag_container = findViewById(R.id.ll_lyric_drag_container);
-        ib_lyric_play=findViewById(R.id.ib_lyric_play);
-        tv_lyric_time=findViewById(R.id.tv_lyric_time);
-        rv=findViewById(R.id.rv);
+        ib_lyric_play = findViewById(R.id.ib_lyric_play);
+        tv_lyric_time = findViewById(R.id.tv_lyric_time);
+        rv = findViewById(R.id.rv);
 
         rv.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
@@ -153,11 +235,11 @@ public class ListLyricView extends LinearLayout implements ViewTreeObserver.OnGl
 
     @Override
     public void onGlobalLayout() {
-        lyricItemOffset = rv.getHeight()/2;
+        lyricItemOffset = rv.getHeight() / 2;
     }
 
     /* 设置歌词数据*/
-    public void setData(Lyric lyric){
+    public void setData(Lyric lyric) {
         this.lyric = lyric;
 
         Collection<Line> values = lyric.getLyrics().values();
@@ -181,6 +263,13 @@ public class ListLyricView extends LinearLayout implements ViewTreeObserver.OnGl
     @Override
     public void onClick(View v) {
 
+        if (v.getId() == R.id.ib_lyric_play){
+
+            onLyricClickListener.onLyricClick(scrollSelectedLyricLine.getStartTime());
+            showScrollLyricView();
+            cancelTask();
+        }
+
     }
 
     /*设置歌词监听器*/
@@ -189,28 +278,28 @@ public class ListLyricView extends LinearLayout implements ViewTreeObserver.OnGl
     }
 
     /*根据传递进来的时间显示对应的歌词*/
-    public void show(long position){
-        if (lyric==null){
+    public void show(long position) {
+        if (lyric == null) {
             return;
         }
         //如果手动拖拽时，就不滚动
-        if (isDrag){
+        if (isDrag) {
             return;
         }
 
-        int newLineNumber = lyric.getLineNumber(position)+DEFAULT_FILL_LYRIC_COUNT;
-        if (newLineNumber != lineNumber){
+        int newLineNumber = lyric.getLineNumber(position) + DEFAULT_FILL_LYRIC_COUNT;
+        if (newLineNumber != lineNumber) {
             scrollToPosition(newLineNumber);
-            this.lineNumber=newLineNumber;
+            this.lineNumber = newLineNumber;
         }
 
-        if (lyric.isAccurate()){
+        if (lyric.isAccurate()) {
             int realNumber = lineNumber - DEFAULT_FILL_LYRIC_COUNT;
-            int lyricCurrentWordIndex = lyric.getWordIndex(realNumber,position);
-            float wordPlayedTime = lyric.getWordPlayedTime(realNumber,position);
+            int lyricCurrentWordIndex = lyric.getWordIndex(realNumber, position);
+            float wordPlayedTime = lyric.getWordPlayedTime(realNumber, position);
 
             View view = layoutManager.findViewByPosition(lineNumber);
-            if (view != null){
+            if (view != null) {
                 LyricLineView llv = view.findViewById(R.id.llv);
                 llv.setLyricCurrentWordIndex(lyricCurrentWordIndex);
                 llv.setWordPlayedTime(wordPlayedTime);
@@ -221,14 +310,35 @@ public class ListLyricView extends LinearLayout implements ViewTreeObserver.OnGl
 
     }
 
-    private void scrollToPosition(int lineNumber){
+    private void scrollToPosition(int lineNumber) {
 
         adapter.setSelectedIndex(lineNumber);
 
-        if (lyricItemOffset > 0){
-            layoutManager.scrollToPositionWithOffset(lineNumber,lyricItemOffset);
+        if (lyricItemOffset > 0) {
+            layoutManager.scrollToPositionWithOffset(lineNumber, lyricItemOffset);
         }
 
+    }
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case MSG_HIDE_TIME_LINE:
+                    showScrollLyricView();
+                    break;
+            }
+        }
+    };
+
+    private void showScrollLyricView() {
+        isDrag = false;
+        ll_lyric_drag_container.setVisibility(GONE);
+    }
+
+    public void setLyricListener(LyricListener lyricListener) {
+        this.lyricListener = lyricListener;
     }
 
     /**

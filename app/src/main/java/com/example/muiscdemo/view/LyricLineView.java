@@ -123,7 +123,7 @@ public class LyricLineView extends View {
                 String currentWord = lyricsWord[lyricCurrentWordIndex];
                 float currentWordTextWidth = getTextWidth(foregroundTextPaint,currentWord);
 
-                float currentWordWidth = currentWordTextWidth/wordDuration[lyricCurrentWordIndex];
+                float currentWordWidth = currentWordTextWidth/wordDuration[lyricCurrentWordIndex]* wordPlayedTime;
                 lineLyricPlayedWidth = beforeTextWidth + currentWordWidth;
             }
 

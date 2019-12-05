@@ -94,7 +94,7 @@ public class MusicPlayerManagerImpl implements MusicPlayerManager, MediaPlayer.O
         if (!isPlaying()) {
             player.start();
             handler.obtainMessage(MSG_PLAYING).sendToTarget();
-            stopPublishProgressService();
+            startPublishProgressService();
         }
 
     }

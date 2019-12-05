@@ -33,6 +33,7 @@ import com.example.muiscdemo.R;
 import com.example.muiscdemo.adapter.MusicPlayerAdapter;
 import com.example.muiscdemo.domain.Lyric;
 import com.example.muiscdemo.domain.Song;
+import com.example.muiscdemo.listener.OnLyricClickListener;
 import com.example.muiscdemo.listener.OnMusicPlayerListener;
 import com.example.muiscdemo.listener.PlayListListener;
 import com.example.muiscdemo.manager.MusicPlayerManager;
@@ -53,7 +54,7 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
-public class MusicPlayerActivity extends BaseTitleActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, OnMusicPlayerListener, PlayListListener, ViewPager.OnPageChangeListener {
+public class MusicPlayerActivity extends BaseTitleActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, OnMusicPlayerListener, PlayListListener, ViewPager.OnPageChangeListener, ListLyricView.LyricListener, OnLyricClickListener {
 
     private ImageView iv_loop_model;
     private ImageView iv_album_bg;
@@ -207,11 +208,14 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
         //事件是无效的，因为内部的RecyclerView拦截了
         //解决方法是监听Item点击，然后通过接口回调（当然也可以使用EventBus）回来
         rv.setOnClickListener(this);
-        lv.setOnClickListener(this);
+        //lv.setOnClickListener(this);
         sb_volume.setOnSeekBarChangeListener(this);
 
-//
-//        lv.setOnLyricClickListener(this);
+        //lv.setOnLongClickListener(this);
+//        rv.setOnLongClickListener(this);
+
+        lv.setLyricListener(this);
+        lv.setOnLyricClickListener(this);
         playListManager.addPlayListListener(this);
 
         vp.addOnPageChangeListener(this);
@@ -360,11 +364,11 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
     }
 
     private void play() {
-        musicPlayerManager.resume();
+        playListManager.resume();
     }
 
     private void pause() {
-        musicPlayerManager.pause();
+        playListManager.pause();
     }
 
     private void showPlayListDialog() {
@@ -426,5 +430,24 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
             setVolume();
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    /*ListLyricView*/
+    @Override
+    public void onLyricItemClick(int position) {
+        showRecordView();
+    }
+
+    @Override
+    public void onLyricItemLongClick(int position) {
+
+    }
+
+    @Override
+    public void onLyricClick(long time) {
+        musicPlayerManager.seekTo((int) time);
+        if (!musicPlayerManager.isPlaying()) {
+            musicPlayerManager.resume();
+        }
     }
 }
