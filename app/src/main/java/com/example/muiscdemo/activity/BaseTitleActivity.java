@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.muiscdemo.R;
+import com.example.muiscdemo.manager.MusicPlayerManager;
+import com.example.muiscdemo.manager.PlayListManager;
 
 public class BaseTitleActivity extends BaseCommonActivity {
 

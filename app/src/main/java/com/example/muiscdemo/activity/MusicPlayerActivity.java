@@ -33,6 +33,7 @@ import com.example.muiscdemo.R;
 import com.example.muiscdemo.adapter.MusicPlayerAdapter;
 import com.example.muiscdemo.domain.Lyric;
 import com.example.muiscdemo.domain.Song;
+import com.example.muiscdemo.fragment.PlayListDialogFragment;
 import com.example.muiscdemo.listener.OnLyricClickListener;
 import com.example.muiscdemo.listener.OnMusicPlayerListener;
 import com.example.muiscdemo.listener.PlayListListener;
@@ -161,10 +162,10 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
     }
 
     private void setLyric(Lyric lyric) {
-        parser = LyricsParser.parse(lyric.getStyle(),lyric.getContent());
+        parser = LyricsParser.parse(lyric.getStyle(), lyric.getContent());
         parser.parse();
 
-        if (parser.getLyric() != null){
+        if (parser.getLyric() != null) {
             lv.setData(parser.getLyric());
         }
 
@@ -373,6 +374,35 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
 
     private void showPlayListDialog() {
 
+        PlayListDialogFragment playListDialog = new PlayListDialogFragment();
+        playListDialog.setCurrentSong(playListManager.getPlayData());
+        playListDialog.setData(playListManager.getPlayList());
+
+        playListDialog.setListener(new PlayListDialogFragment.OnPlayListDialogListener() {
+            @Override
+            public void onRemoveClick(int position) {
+                Song currentSong = playListManager.getPlayList().get(position);
+                playListManager.delete(currentSong);
+                currentSong = playListManager.getPlayData();
+                if (currentSong == null) {
+                    playListManager.destroy();
+                    playListDialog.dismiss();
+                    finish();
+                } else {
+                    playListDialog.setCurrentSong(currentSong);
+                    playListDialog.setData(playListManager.getPlayList());
+                }
+            }
+
+            @Override
+            public void onItemClick(int position) {
+
+                playListManager.play(playListManager.getPlayList().get(position));
+                playListDialog.setCurrentSong(playListManager.getPlayData());
+            }
+        });
+
+        playListDialog.show(getSupportFragmentManager(), "PlayListDialogFragment");
     }
 
     private void download() {
@@ -426,7 +456,7 @@ public class MusicPlayerActivity extends BaseTitleActivity implements View.OnCli
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        if (KeyEvent.KEYCODE_VOLUME_UP == keyCode || KeyEvent.KEYCODE_VOLUME_DOWN == keyCode){
+        if (KeyEvent.KEYCODE_VOLUME_UP == keyCode || KeyEvent.KEYCODE_VOLUME_DOWN == keyCode) {
             setVolume();
         }
         return super.onKeyDown(keyCode, event);

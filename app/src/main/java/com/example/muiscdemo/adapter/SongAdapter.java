@@ -29,7 +29,7 @@ public class SongAdapter extends BaseQuickAdapter<Song, BaseViewHolder> {
     @Override
     protected void convert(@NonNull BaseViewHolder helper, Song item) {
 
-        helper.setText(R.id.tv_position, String.valueOf(helper.getLayoutPosition() + 1));
+        helper.setText(R.id.tv_position, String.valueOf(helper.getLayoutPosition()));
         helper.setText(R.id.tv_title, item.getTitle());
         helper.setText(R.id.tv_info, item.getArtist().getNickname() + " - " + item.getAlbum().getTitle());
         helper.addOnClickListener(R.id.iv_more);

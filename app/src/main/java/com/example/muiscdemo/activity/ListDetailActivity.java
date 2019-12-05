@@ -36,7 +36,10 @@ import com.example.muiscdemo.domain.Song;
 import com.example.muiscdemo.domain.playlist;
 import com.example.muiscdemo.domain.response.DetailResponse;
 import com.example.muiscdemo.fragment.SongMoreDialogFragment;
+import com.example.muiscdemo.manager.MusicPlayerManager;
+import com.example.muiscdemo.manager.PlayListManager;
 import com.example.muiscdemo.reactivex.HttpListener;
+import com.example.muiscdemo.service.MusicPlayerService;
 import com.example.muiscdemo.util.Consts;
 import com.example.muiscdemo.util.ImageUtil;
 
@@ -59,6 +62,9 @@ public class ListDetailActivity extends BaseTitleActivity {
     private TextView tv_count;
     private SongAdapter adapter;
     private String id;
+
+    protected PlayListManager playListManager;
+    protected MusicPlayerManager musicPlayerManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,11 +110,18 @@ public class ListDetailActivity extends BaseTitleActivity {
         rv.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Song songModel = (Song) adapter.getItem(position);
-                System.out.println(songModel.getAlbum().getTitle());
+                play(position);
             }
         });
 
+    }
+
+    private void play(int position) {
+        Song data = adapter.getItem(position);
+        playListManager.setPlayList(adapter.getData());
+        playListManager.play(data);
+        adapter.notifyDataSetChanged();
+        startActivity(MusicPlayerActivity.class);
     }
 
     private void createHeaderView() {
@@ -126,6 +139,9 @@ public class ListDetailActivity extends BaseTitleActivity {
     protected void initDatas() {
         super.initDatas();
         id = getIntent().getStringExtra(Consts.ID);
+
+        playListManager = MusicPlayerService.getPlayListManager(getApplicationContext());
+        musicPlayerManager = MusicPlayerService.getMusicPlayerManager(getApplicationContext());
 
 
         fetchData();
