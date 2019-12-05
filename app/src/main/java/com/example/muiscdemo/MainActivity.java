@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.muiscdemo.activity.BaseMusicPlayerActivity;
 import com.example.muiscdemo.activity.BaseTitleActivity;
 import com.example.muiscdemo.activity.LoginActivity;
 import com.example.muiscdemo.activity.SettingsActivity;
@@ -41,7 +42,7 @@ import java.util.List;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends BaseTitleActivity implements View.OnClickListener {
+public class MainActivity extends BaseMusicPlayerActivity implements View.OnClickListener {
 
     private DrawerLayout drawer_layout;
     ImageView iv_avatar;
@@ -122,7 +123,7 @@ public class MainActivity extends BaseTitleActivity implements View.OnClickListe
                         @Override
                         public void onSucceeded(DetailResponse<User> data) {
                             super.onSucceeded(data);
-                            ImageUtil.showCircle(MainActivity.this,iv_avatar,data.getData().getAvatar());
+                            ImageUtil.showCircle(MainActivity.this, iv_avatar, data.getData().getAvatar());
                             tv_nickname.setText(data.getData().getNickname());
                             tv_description.setText(data.getData().getDescription());
 
@@ -194,26 +195,29 @@ public class MainActivity extends BaseTitleActivity implements View.OnClickListe
             case R.id.iv_avatar:
                 avatarClick();
                 break;
+            default:
+                super.onClick(v);
+                break;
 
         }
 
     }
 
     @SuppressLint("WrongConstant")
-    private void closeDrawer(){
+    private void closeDrawer() {
         drawer_layout.closeDrawer(Gravity.START);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void logoutSuccessEvent(LogoutSuccessEvent event){
+    public void logoutSuccessEvent(LogoutSuccessEvent event) {
         getUserInfo();
     }
 
-    private void avatarClick(){
+    private void avatarClick() {
         closeDrawer();
-        if (sp.isLogin()){
-            startActivityExtraId(UserDetailActivity.class,sp.getUserId());
-        }else {
+        if (sp.isLogin()) {
+            startActivityExtraId(UserDetailActivity.class, sp.getUserId());
+        } else {
             startActivity(LoginActivity.class);
         }
     }
