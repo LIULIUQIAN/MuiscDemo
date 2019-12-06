@@ -178,24 +178,17 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
 
     private void initMediaSession() {
 
-
         mediaSession = new MediaSessionCompat(context, TAG);
-
         //设置哪些事件回调我们
         //FLAG_HANDLES_MEDIA_BUTTONS：媒体控制按钮
         //FLAG_HANDLES_TRANSPORT_CONTROLS：传输控制命令，耳机，蓝牙等控制
-        mediaSession.setFlags(
-                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
         //设置哪些按钮可用
-        stateBuilder = new PlaybackStateCompat.Builder()
-                .setActions(MEDIA_SESSION_ACTIONS);
+        stateBuilder = new PlaybackStateCompat.Builder().setActions(MEDIA_SESSION_ACTIONS);
         mediaSession.setPlaybackState(stateBuilder.build());
-
         //设置回调
         mediaSession.setCallback(new MediaSessionCallback());
-
         //激活控制器
         mediaSession.setActive(true);
     }
