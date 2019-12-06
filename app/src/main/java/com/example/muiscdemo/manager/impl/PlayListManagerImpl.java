@@ -443,36 +443,14 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
 //        WidgetUtil.onProgress(context,progress,total);
     }
 
-    private void updateMediaInfo() {
-
-        MediaMetadataCompat.Builder metaData = new MediaMetadataCompat.Builder()
-                //歌曲名称
-                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, currentSong.getTitle())
-                //歌手
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, currentSong.getArtist_name())
-                //专辑名
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, currentSong.getTitle())
-                //专辑歌手
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, currentSong.getAlbum_title())
-                //当前歌曲时长
-                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, currentSong.getDuration())
-                //当前歌曲的封面
-                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumBitmap);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //当前列表总共有多少首音乐
-            metaData.putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, getPlayList().size());
-        }
-
-        mediaSession.setMetadata(metaData.build());
-    }
-
     @Override
     public void onPaused(Song data) {
         //设置状态，当前播放位置，播放速度
         if (currentSong != null) {
             stateBuilder.setState(PlaybackStateCompat.STATE_PAUSED, getPlayList().indexOf(currentSong), 1.0f);
             mediaSession.setPlaybackState(stateBuilder.build());
+
+
 //            NotificationUtil.showMusicNotification(context,currentSong,false);
 //            floatingLayoutManager.onPaused(data);
 //
@@ -484,6 +462,7 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
     public void onPlaying(Song data) {
         stateBuilder.setState(PlaybackStateCompat.STATE_PLAYING, getPlayList().indexOf(currentSong), 1.0f);
         mediaSession.setPlaybackState(stateBuilder.build());
+
 //        NotificationUtil.showMusicNotification(context,currentSong,true);
 //        floatingLayoutManager.onPlaying(data);
 //
@@ -542,6 +521,30 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
 
                     }
                 });
+    }
+
+    private void updateMediaInfo() {
+
+        MediaMetadataCompat.Builder metaData = new MediaMetadataCompat.Builder()
+                //歌曲名称
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, currentSong.getTitle())
+                //歌手
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, currentSong.getArtist().getNickname())
+                //专辑名
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, currentSong.getTitle())
+                //专辑歌手
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, currentSong.getAlbum().getTitle())
+                //当前歌曲时长
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, currentSong.getDuration())
+                //当前歌曲的封面
+                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumBitmap);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //当前列表总共有多少首音乐
+            metaData.putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, getPlayList().size());
+        }
+
+        mediaSession.setMetadata(metaData.build());
     }
 
     private void updateFloatingLayoutInfo() {
