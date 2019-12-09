@@ -40,6 +40,7 @@ import com.example.muiscdemo.service.MusicPlayerService;
 import com.example.muiscdemo.util.Consts;
 import com.example.muiscdemo.util.DataUtil;
 import com.example.muiscdemo.util.ImageUtil;
+import com.example.muiscdemo.util.NotificationUtil;
 import com.example.muiscdemo.util.OrmUtil;
 import com.example.muiscdemo.util.SharedPreferencesUtil;
 
@@ -133,11 +134,7 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
         notificationMusicReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (Consts.ACTION_LIKE.equals(intent.getAction())) {
-
-                } else if (Consts.ACTION_PREVIOUS.equals(intent.getAction())) {
-                    play(previous());
-                } else if (Consts.ACTION_PLAY.equals(intent.getAction())) {
+                if (Consts.ACTION_PLAY.equals(intent.getAction())) {
                     playOrPause();
                 } else if (Consts.ACTION_NEXT.equals(intent.getAction())) {
                     play(next());
@@ -450,8 +447,7 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
             stateBuilder.setState(PlaybackStateCompat.STATE_PAUSED, getPlayList().indexOf(currentSong), 1.0f);
             mediaSession.setPlaybackState(stateBuilder.build());
 
-
-//            NotificationUtil.showMusicNotification(context,currentSong,false);
+            NotificationUtil.showMusicNotification(context,currentSong,false);
 //            floatingLayoutManager.onPaused(data);
 //
 //            WidgetUtil.onPaused(context);
@@ -463,7 +459,7 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
         stateBuilder.setState(PlaybackStateCompat.STATE_PLAYING, getPlayList().indexOf(currentSong), 1.0f);
         mediaSession.setPlaybackState(stateBuilder.build());
 
-//        NotificationUtil.showMusicNotification(context,currentSong,true);
+        NotificationUtil.showMusicNotification(context,currentSong,true);
 //        floatingLayoutManager.onPlaying(data);
 //
 //        WidgetUtil.onPlaying(context);
