@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:gravity="center_vertical"
+    android:paddingLeft="@dimen/play_controller_margin"
+    android:paddingRight="@dimen/play_controller_margin">
+
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="@dimen/notification_height"
+        android:layout_height="64dp"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/button_padding"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="这是歌曲名称"
+            android:textColor="@color/text" />
+
+        <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/item_icon_padding"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="这是歌曲名称"
+            android:textColor="@color/text_grey"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_play"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingRight="@dimen/play_controller_margin"
+        android:src="@drawable/ic_music_notification_play" />
+
+    <ImageView
+        android:id="@+id/iv_next"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="10dp"
+        android:paddingRight="@dimen/play_controller_margin"
+        android:src="@drawable/ic_music_notification_next" />
+
+    <ImageView
+        android:id="@+id/iv_play_screen_lyric"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_music_notification_lyric" />
+
+</LinearLayout>
+

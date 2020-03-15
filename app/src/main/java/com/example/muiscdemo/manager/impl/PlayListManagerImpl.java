@@ -1,10 +1,14 @@
 package com.example.muiscdemo.manager.impl;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
@@ -13,12 +17,15 @@ import android.os.Message;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.muiscdemo.api.Api;
@@ -33,6 +40,7 @@ import com.example.muiscdemo.service.MusicPlayerService;
 import com.example.muiscdemo.util.Consts;
 import com.example.muiscdemo.util.DataUtil;
 import com.example.muiscdemo.util.ImageUtil;
+import com.example.muiscdemo.util.NotificationUtil;
 import com.example.muiscdemo.util.OrmUtil;
 import com.example.muiscdemo.util.SharedPreferencesUtil;
 
@@ -83,7 +91,7 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
     private static final long DEFAULT_SAVE_PROGRESS_TIME = 1000;
 
     private final MusicPlayerManager musicPlayer;
-//    private final FloatingLayoutManager floatingLayoutManager;
+    //    private final FloatingLayoutManager floatingLayoutManager;
 //    private final DownloadManager downloadManager;
     private List<Song> datum = new LinkedList<>();
 
@@ -126,15 +134,11 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
         notificationMusicReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (Consts.ACTION_LIKE.equals(intent.getAction())) {
-
-                }else if (Consts.ACTION_PREVIOUS.equals(intent.getAction())) {
-                    play(previous());
-                }else if (Consts.ACTION_PLAY.equals(intent.getAction())) {
+                if (Consts.ACTION_PLAY.equals(intent.getAction())) {
                     playOrPause();
-                }else if (Consts.ACTION_NEXT.equals(intent.getAction())) {
+                } else if (Consts.ACTION_NEXT.equals(intent.getAction())) {
                     play(next());
-                }else if (Consts.ACTION_LYRIC.equals(intent.getAction())) {
+                } else if (Consts.ACTION_LYRIC.equals(intent.getAction())) {
                     showOrHideGlobalLyric();
                 }
             }
@@ -147,7 +151,7 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
         intentFilter.addAction(Consts.ACTION_PLAY);
         intentFilter.addAction(Consts.ACTION_NEXT);
         intentFilter.addAction(Consts.ACTION_LYRIC);
-        context.registerReceiver(notificationMusicReceiver,intentFilter);
+        context.registerReceiver(notificationMusicReceiver, intentFilter);
     }
 
     private void playOrPause() {
@@ -170,23 +174,18 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
     }
 
     private void initMediaSession() {
-        mediaSession = new MediaSessionCompat(context, TAG);
 
+        mediaSession = new MediaSessionCompat(context, TAG);
         //设置哪些事件回调我们
         //FLAG_HANDLES_MEDIA_BUTTONS：媒体控制按钮
         //FLAG_HANDLES_TRANSPORT_CONTROLS：传输控制命令，耳机，蓝牙等控制
-        mediaSession.setFlags(
-                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
         //设置哪些按钮可用
-        stateBuilder = new PlaybackStateCompat.Builder()
-                .setActions(MEDIA_SESSION_ACTIONS);
+        stateBuilder = new PlaybackStateCompat.Builder().setActions(MEDIA_SESSION_ACTIONS);
         mediaSession.setPlaybackState(stateBuilder.build());
-
         //设置回调
         mediaSession.setCallback(new MediaSessionCallback());
-
         //激活控制器
         mediaSession.setActive(true);
     }
@@ -258,11 +257,11 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
     @Override
     public void setPlayList(List<Song> datum) {
         //将原来数据在PlayList的标志去掉，并保持到数据库
-        DataUtil.changePlayListFlag(this.datum,false);
+        DataUtil.changePlayListFlag(this.datum, false);
         saveAll(this.datum);
         this.datum.clear();
         //将当前传递进来的数据更改为在PlayList标志，并添加到集合
-        this.datum.addAll(DataUtil.changePlayListFlag(datum,true));
+        this.datum.addAll(DataUtil.changePlayListFlag(datum, true));
         //在这里要保存数据
         saveAll(this.datum);
     }
@@ -441,41 +440,14 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
 //        WidgetUtil.onProgress(context,progress,total);
     }
 
-    private void updateMediaInfo() {
-        MediaMetadataCompat.Builder metaData = new MediaMetadataCompat.Builder()
-                //歌曲名称
-                .putString(MediaMetadataCompat.METADATA_KEY_TITLE,currentSong.getTitle())
-
-                //歌手
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, currentSong.getArtist_name())
-
-                //专辑名
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, currentSong.getTitle())
-
-                //专辑歌手
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, currentSong.getAlbum_title())
-
-                //当前歌曲时长
-                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, currentSong.getDuration())
-
-                //当前歌曲的封面
-                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumBitmap);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //当前列表总共有多少首音乐
-            metaData.putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, getPlayList().size());
-        }
-
-        mediaSession.setMetadata(metaData.build());
-    }
-
     @Override
     public void onPaused(Song data) {
         //设置状态，当前播放位置，播放速度
-        if (currentSong!=null) {
+        if (currentSong != null) {
             stateBuilder.setState(PlaybackStateCompat.STATE_PAUSED, getPlayList().indexOf(currentSong), 1.0f);
             mediaSession.setPlaybackState(stateBuilder.build());
-//            NotificationUtil.showMusicNotification(context,currentSong,false);
+
+            NotificationUtil.showMusicNotification(context,currentSong,false);
 //            floatingLayoutManager.onPaused(data);
 //
 //            WidgetUtil.onPaused(context);
@@ -486,7 +458,8 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
     public void onPlaying(Song data) {
         stateBuilder.setState(PlaybackStateCompat.STATE_PLAYING, getPlayList().indexOf(currentSong), 1.0f);
         mediaSession.setPlaybackState(stateBuilder.build());
-//        NotificationUtil.showMusicNotification(context,currentSong,true);
+
+        NotificationUtil.showMusicNotification(context,currentSong,true);
 //        floatingLayoutManager.onPlaying(data);
 //
 //        WidgetUtil.onPlaying(context);
@@ -495,7 +468,7 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
     @Override
     public void onPrepared(MediaPlayer mediaPlayer, final Song data) {
         data.setDuration(mediaPlayer.getDuration());
-        orm.saveSong(data,sp.getUserId());
+        orm.saveSong(data, sp.getUserId());
 
         //获取歌词
         Api.getInstance().songsDetail(data.getId())
@@ -508,7 +481,7 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
                         if (songDetailResponse != null && songDetailResponse.getData() != null && songDetailResponse.getData().getLyric() != null) {
                             //将数据设置到歌曲上
                             data.setLyric(songDetailResponse.getData().getLyric());
-                            orm.saveSong(data,sp.getUserId());
+                            orm.saveSong(data, sp.getUserId());
                             //updateFloatingLayoutInfo();
                             sendDataReadyMessage();
                         }
@@ -526,13 +499,48 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
     private void updateAndroidMediaInfo() {
         RequestOptions options = new RequestOptions();
         options.centerCrop();
-        Glide.with(context).asBitmap().load(ImageUtil.getImageURI(currentSong.getBanner())).apply(options).into(new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                PlayListManagerImpl.this.albumBitmap = resource;
-                updateMediaInfo();
-            }
-        });
+
+        Glide.with(context)
+                .asBitmap()
+                .load(ImageUtil.getImageURI(currentSong.getBanner()))
+                .apply(options)
+                .into(new CustomTarget<Bitmap>() {
+
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        PlayListManagerImpl.this.albumBitmap = resource;
+                        updateMediaInfo();
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                    }
+                });
+    }
+
+    private void updateMediaInfo() {
+
+        MediaMetadataCompat.Builder metaData = new MediaMetadataCompat.Builder()
+                //歌曲名称
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, currentSong.getTitle())
+                //歌手
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, currentSong.getArtist().getNickname())
+                //专辑名
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, currentSong.getTitle())
+                //专辑歌手
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, currentSong.getAlbum().getTitle())
+                //当前歌曲时长
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, currentSong.getDuration())
+                //当前歌曲的封面
+                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumBitmap);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //当前列表总共有多少首音乐
+            metaData.putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, getPlayList().size());
+        }
+
+        mediaSession.setMetadata(metaData.build());
     }
 
     private void updateFloatingLayoutInfo() {
@@ -567,7 +575,7 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
     public void destroy() {
         if (notificationMusicReceiver != null) {
             context.unregisterReceiver(notificationMusicReceiver);
-            notificationMusicReceiver=null;
+            notificationMusicReceiver = null;
         }
     }
 
@@ -577,7 +585,7 @@ public class PlayListManagerImpl implements PlayListManager, OnMusicPlayerListen
         if (index != -1) {
             //先移除原来的歌曲，可能存在于列表
             datum.remove(song);
-            datum.add(index+1,song);
+            datum.add(index + 1, song);
         } else {
             throw new IllegalArgumentException("Can't find current song!");
 
